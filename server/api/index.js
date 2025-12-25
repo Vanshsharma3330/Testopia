@@ -19,7 +19,7 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,
+  process.env.ACCESS_URL,
   "http://localhost:5173"
 ];
 
