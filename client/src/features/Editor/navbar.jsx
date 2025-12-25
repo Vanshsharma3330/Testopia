@@ -14,7 +14,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { useState } from "react";
 import Popup from "../../shared/components/popup";
-import ShareLink from "./ShareLink";
+import ShareLink from "./shareLink";
 import { AnimatePresence } from "framer-motion";
 import { useToast } from "../../hooks/useToast";
 
