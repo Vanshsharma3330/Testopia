@@ -31,8 +31,8 @@ A modern quiz application built with React and Node.js that allows users to crea
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/Vanshsharma3330/IntelliQuiz.git
-cd IntelliQuiz
+git clone https://github.com/Vanshsharma3330/Testopia.git
+cd Testopia
 ```
 
 2. Install dependencies:
