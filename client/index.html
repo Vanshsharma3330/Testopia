@@ -1,46 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>IntelliQuiz</title>
-        <link rel="stylesheet" href="src/assets/styles/globals.css" />
-        <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet" />
-        <style>
-            .apploader {
-                width: 28px;
-                aspect-ratio: 1;
-                border-radius: 50%;
-                background: #caef45;
-                animation: l2 1.2s infinite;
-            }
-            @keyframes l2 {
-                0%,
-                100% {
-                    transform: translate(-60px);
-                    box-shadow: 0 0 #52ee98, 0 0 #000;
-                }
-                40% {
-                    transform: translate(60px);
-                    box-shadow: -15px 0 #52ee98, -30px 0 #000;
-                }
-                50% {
-                    transform: translate(60px);
-                    box-shadow: 0 0 #52ee98, 0 0 #000;
-                }
-                90% {
-                    transform: translate(-60px);
-                    box-shadow: 15px 0 #52ee98, 30px 0 #000;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div id="root">
-            <div style="width: 100vw; height: 100vh; display: grid; place-content: center;">
-              <div class="apploader"></div>
-            </div>
-        </div>
-        <script type="module" src="./src/app/main.jsx"></script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Testopia</title>
+    <link rel="stylesheet" href="src/assets/styles/globals.css" />
+    <link href="https://fonts.cdnfonts.com/css/satoshi" rel="stylesheet" />
+    <style>
+      .apploader {
+        width: 28px;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #caef45;
+        animation: l2 1.2s infinite;
+      }
+      @keyframes l2 {
+        0%,
+        100% {
+          transform: translate(-60px);
+          box-shadow: 0 0 #52ee98, 0 0 #000;
+        }
+        40% {
+          transform: translate(60px);
+          box-shadow: -15px 0 #52ee98, -30px 0 #000;
+        }
+        50% {
+          transform: translate(60px);
+          box-shadow: 0 0 #52ee98, 0 0 #000;
+        }
+        90% {
+          transform: translate(-60px);
+          box-shadow: 15px 0 #52ee98, 30px 0 #000;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root">
+      <div
+        style="
+          width: 100vw;
+          height: 100vh;
+          display: grid;
+          place-content: center;
+        "
+      >
+        <div class="apploader"></div>
+      </div>
+    </div>
+    <script type="module" src="./src/app/main.jsx"></script>
+  </body>
 </html>

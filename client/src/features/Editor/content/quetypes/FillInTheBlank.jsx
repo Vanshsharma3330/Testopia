@@ -8,135 +8,159 @@ import { QuestionMark } from "@phosphor-icons/react";
 import { Reorder, motion } from "framer-motion";
 import Blank from "../queOptions/blanks";
 
-
 export default function FillInTheBlank({ que, index }) {
+  const [blankMismatch, setBlankMismatch] = useState(false);
 
-    const [blankMismatch , setBlankMismatch] = useState(false);
- 
-    function splitString(str) {
-        // Use regex to match [Blank] and other text
-        const pattern = /(\[Blank\])|([^\[]+)/g;
+  function splitString(str) {
+    // Use regex to match [Blank] and other text
+    const pattern = /(\[Blank\])|([^\[]+)/g;
 
-        // Match all occurrences and filter out empty strings
-        const matches = str.match(pattern)
-            .filter(match => match.trim() !== '');
+    // Match all occurrences and filter out empty strings
+    const matches = str.match(pattern).filter((match) => match.trim() !== "");
 
-        return matches;
-    }
+    return matches;
+  }
 
-    const { updateQuesContext } = useQues();
+  const { updateQuesContext } = useQues();
 
-    return (
-        <>
+  return (
+    <>
+      <Formik initialValues={{ ...que }}>
+        {(formik) => {
+          const ModifyBlankFromQue = () => {
+            const newQue = formik.values.que;
 
-            <Formik initialValues={{ ...que }} >
-                {(formik) => {
+            if (newQue.length > 0) {
+              const blanks = formik.values.correct;
 
-                    const ModifyBlankFromQue = () => {
-                        const newQue = formik.values.que;
+              const queBlanks = newQue.match(/\[Blank\]/g) || [];
 
-                        if (newQue.length > 0) {
-                            const blanks = formik.values.correct;
+              if (queBlanks.length > blanks.length) {
+                formik.setFieldValue("correct", [
+                  ...correct,
+                  { id: Date.now(), text: "" },
+                ]);
+              } else if (queBlanks.length < blanks.length) {
+                setBlankMismatch(true);
+              } else {
+                setBlankMismatch(false);
+              }
+            }
+          };
 
-                            const queBlanks = newQue.match(/\[Blank\]/g) || [];
+          const RemoveBlankUsingTrash = (index, remove) => {
+            const matched = splitString(formik.values.que);
 
-                            if (queBlanks.length > blanks.length) {
-                                formik.setFieldValue("correct", [...correct, { id: Date.now(), text: "" }]);
-                            }else if(queBlanks.length < blanks.length){
-                                setBlankMismatch(true);
-                            }else{
-                                setBlankMismatch(false);
-                            }
-                        }
-                    }
+            let blankCount = 0;
 
-                    const RemoveBlankUsingTrash = (index, remove) => {
+            for (let i = 0; i < matched.length; i++) {
+              if (matched[i] === "[Blank]") {
+                if (blankCount === index) {
+                  matched.splice(i, 1);
+                  formik.setFieldValue("que", matched.join(""));
+                  break;
+                }
+                blankCount++;
+              }
+            }
 
-                        const matched = splitString(formik.values.que);
+            remove(index);
+          };
 
-                        let blankCount = 0;
+          useEffect(() => {
+            ModifyBlankFromQue();
+          }, [formik.values.que]);
 
-                        for (let i = 0; i < matched.length; i++) {
-                            if (matched[i] === "[Blank]") {
-                                if (blankCount === index) {
-                                    matched.splice(i, 1);
-                                    formik.setFieldValue("que", matched.join(""));
-                                    break;
-                                }
-                                blankCount++;
-                            }
-                        }
+          useEffect(() => {
+            console.log(formik.values);
 
-                        remove(index);
-                    };
+            const timer = setTimeout(() => {
+              updateQuesContext({ ...formik.values }, index);
+            }, 400);
 
-                    useEffect(() => {
-                        ModifyBlankFromQue();
-                    }, [formik.values.que])
+            return () => clearTimeout(timer);
+          }, [formik.values]);
 
-                    useEffect(() => {
-                        console.log(formik.values);
+          return (
+            <>
+              <QueHeader formik={formik} index={index} />
+              <div className="flex pt-5 pb-2 items-center font-bold">
+                <QuestionMark size={19} weight="fill" />
+                <p className="ml-1 text-sm">Question {index + 1}</p>
+              </div>
 
-                        const timer = setTimeout(() => {
-                            updateQuesContext({ ...formik.values }, index);
-                        }, 400);
+              <QueTitle form={{ ...formik.getFieldProps("que") }} />
+              {blankMismatch && (
+                <p className="text-red-500 text-[10px] font-Silka-Medium">
+                  * Blanks Mismatch
+                </p>
+              )}
 
-                        return () => clearTimeout(timer);
-                    }, [formik.values])
+              <div className="flex pt-3 text-sm">
+                <p className="border-r-[2.5px] pr-2 mr-4">Correct Blanks*</p>
+              </div>
 
-                    return (
-                        <>
-                            <QueHeader formik={formik} index={index}/>
-                            <div className="flex pt-5 pb-2 items-center font-bold">
-                                <QuestionMark size={19} weight="fill" />
-                                <p className="ml-1 text-sm">Question {index + 1}</p>
-                            </div>
-
-                            <QueTitle form={{ ...formik.getFieldProps("que") }} />
-                            {blankMismatch && <p className="text-red-500 text-[10px] font-Silka-Medium">* Blanks Mismatch</p>}
-
-
-                            <div className="flex pt-3 text-sm">
-                                <p className="border-r-[2.5px] pr-2 mr-4">Correct Blanks*</p>
-                            </div>
-
-                            <FieldArray name="correct">
-                                {({ remove, push }) => (
-                                    <>
-                                        <div className="mt-3 flex flex-col mb-3 overflow-x-hidden">
-                                            <Reorder.Group
-                                                axis="y"
-                                                values={formik.values.correct}
-                                                onReorder={(newOrder) => { formik.setFieldValue("correct", newOrder) }}
-                                            >
-                                                {formik.values.correct.map((blank, i) => {
-                                                    return <Blank
-                                                        key={blank.id}
-                                                        i={i}
-                                                        handleChanges={(e) => formik.setFieldValue(`correct[${i}].text`, e.target.value)}
-                                                        blank={blank}
-                                                        remove={(i) => RemoveBlankUsingTrash(i, remove)}
-                                                    />
-                                                })}
-                                            </Reorder.Group>
-                                        </div>
-                                        <button
-                                            type="button"
-                                            onClick={() => { formik.setFieldValue("que", formik.values.que + "[Blank]"); push({ id: Date.now(), text: "" }) }}
-                                            className="border-dashed rounded-md border-[2px] font-Satoshi-Bold border-[#D7D9DB] text-xs ml-4 pr-4 pl-4 w-fit p-2 flex justify-center"
-                                        >
-                                            + Add Blank
-                                        </button>
-                                    </>
-                                )}
-
-                            </FieldArray>
-                            <QueFooter values={{points : formik.values.points, randomizedOptions : formik.values.randomizedOptions}} updatePoints={(value) => formik.setFieldValue("points" , value || 0)}/>
-                        </>
-                    )
+              <FieldArray name="correct">
+                {({ remove, push }) => (
+                  <>
+                    <div className="mt-3 flex flex-col mb-3 overflow-x-hidden">
+                      <Reorder.Group
+                        axis="y"
+                        values={formik.values.correct}
+                        onReorder={(newOrder) => {
+                          formik.setFieldValue("correct", newOrder);
+                        }}
+                      >
+                        {formik.values.correct.map((blank, i) => {
+                          return (
+                            <Blank
+                              key={blank.id}
+                              i={i}
+                              handleChanges={(e) =>
+                                formik.setFieldValue(
+                                  `correct[${i}].text`,
+                                  e.target.value,
+                                )
+                              }
+                              blank={blank}
+                              remove={(i) => RemoveBlankUsingTrash(i, remove)}
+                            />
+                          );
+                        })}
+                      </Reorder.Group>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        formik.setFieldValue(
+                          "que",
+                          formik.values.que + "[Blank]",
+                        );
+                        push({
+                          id: Date.now(),
+                          text: "",
+                        });
+                      }}
+                      className="border-dashed rounded-md border-[2px] font-Satoshi-Bold border-[#D7D9DB] text-xs ml-4 pr-4 pl-4 w-fit p-2 flex justify-center"
+                    >
+                      + Add Blank
+                    </button>
+                  </>
+                )}
+              </FieldArray>
+              <QueFooter
+                values={{
+                  points: formik.values.points,
+                  randomizedOptions: formik.values.randomizedOptions,
                 }}
-
-            </Formik>
-        </>
-    )
+                updatePoints={(value) =>
+                  formik.setFieldValue("points", value || 0)
+                }
+              />
+            </>
+          );
+        }}
+      </Formik>
+    </>
+  );
 }

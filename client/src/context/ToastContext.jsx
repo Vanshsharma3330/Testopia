@@ -1,19 +1,19 @@
 import React, { createContext, useState, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
-import Toast from "../components/toast";
+import Toast from "../shared/components/toast";
 
 export const ToastContext = createContext();
 
-export default function ToastProvider({ children }){
+export default function ToastProvider({ children }) {
   const [toast, setToast] = useState(null);
 
   const showToast = useCallback((status, msg, duration = 3000) => {
     setToast({ status, msg, duration });
 
-    setTimeout(() => { setToast(null); }, duration);
-
-    },[]);
-    
+    setTimeout(() => {
+      setToast(null);
+    }, duration);
+  }, []);
 
   return (
     <ToastContext.Provider value={showToast}>
@@ -32,4 +32,4 @@ export default function ToastProvider({ children }){
       </div>
     </ToastContext.Provider>
   );
-};
+}
